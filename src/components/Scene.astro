@@ -1,0 +1,114 @@
+---
+// The sky behind the whole page: day gradient, night gradient, stars and clouds.
+// It stays fixed while you scroll, like a backdrop. Decorative only.
+// Sky colors: top of src/styles/global.css. Cloud and star pictures: src/config/theme.ts.
+import { theme } from "../config/theme";
+
+// Position, size (px), drift time (s) and opacity of each cloud. Edit freely.
+const clouds = [
+  { top: "7%", left: "5%", width: 260, dur: 110, delay: 0, opacity: 0.95 },
+  { top: "22%", left: "58%", width: 340, dur: 140, delay: -40, opacity: 0.85 },
+  { top: "40%", left: "18%", width: 200, dur: 100, delay: -70, opacity: 0.75 },
+  { top: "55%", left: "70%", width: 280, dur: 160, delay: -20, opacity: 0.7 },
+];
+---
+
+<div class="scene" aria-hidden="true">
+  <div class="sky sky-day"></div>
+  <div class="sky sky-night"></div>
+  <div class="stars"></div>
+  <div class="stars stars-twinkle"></div>
+  {
+    clouds.map((c) => (
+      <img
+        class="cloud"
+        src={theme.cloud}
+        alt=""
+        style={`top:${c.top}; left:${c.left}; --w:${c.width}; --dur:${c.dur}s; --op:${c.opacity}; animation-delay:${c.delay}s;`}
+      />
+    ))
+  }
+</div>
+
+<style>
+  .scene {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  /* Two skies stacked; switching theme cross-fades between them. */
+  .sky {
+    position: absolute;
+    inset: 0;
+    transition: opacity 1s ease;
+  }
+  .sky-day {
+    background: linear-gradient(to bottom, var(--sky-day-top), var(--sky-day-bottom));
+  }
+  .sky-night {
+    background: linear-gradient(to bottom, var(--sky-night-top), var(--sky-night-bottom));
+    opacity: 0;
+  }
+  :global(html[data-theme="dark"]) .sky-night {
+    opacity: 1;
+  }
+
+  /* Stars: only visible at night. */
+  .stars {
+    position: absolute;
+    inset: 0;
+    background-image: var(--stars-image);
+    background-size: 600px 400px;
+    opacity: 0;
+    transition: opacity 1.2s ease;
+  }
+  .stars-twinkle {
+    background-size: 430px 290px;
+    background-position: 120px 80px;
+  }
+  :global(html[data-theme="dark"]) .stars {
+    opacity: 0.9;
+  }
+  :global(html[data-theme="dark"]) .stars-twinkle {
+    animation: twinkle 5s ease-in-out infinite alternate;
+  }
+  @keyframes twinkle {
+    from {
+      opacity: 0.25;
+    }
+    to {
+      opacity: 0.9;
+    }
+  }
+
+  /* Clouds: drift slowly by day, fade away at night. */
+  .cloud {
+    position: absolute;
+    width: calc(var(--w) * 1px * var(--cloud-scale));
+    height: auto;
+    opacity: var(--op);
+    transition: opacity 1s ease;
+    animation: drift var(--dur) ease-in-out infinite alternate;
+  }
+  :global(html[data-theme="dark"]) .cloud {
+    opacity: calc(var(--op) * 0.1);
+  }
+  @keyframes drift {
+    from {
+      transform: translateX(-6vw);
+    }
+    to {
+      transform: translateX(6vw);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cloud,
+    :global(html[data-theme="dark"]) .stars-twinkle {
+      animation: none;
+    }
+  }
+</style>

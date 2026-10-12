@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <radialGradient id="halo"><stop offset="0" stop-color="#fff2a8" stop-opacity="0.55"/><stop offset="1" stop-color="#fff2a8" stop-opacity="0"/></radialGradient>
+    <radialGradient id="core"><stop offset="0" stop-color="#fff7b8"/><stop offset="0.7" stop-color="#ffd23f"/><stop offset="1" stop-color="#ffb627"/></radialGradient>
+  </defs>
+  <circle cx="100" cy="100" r="100" fill="url(#halo)"/>
+  <g stroke="#ffc83d" stroke-width="7" stroke-linecap="round"><line x1="164.0" y1="100.0" x2="184.0" y2="100.0"/><line x1="155.4" y1="132.0" x2="172.7" y2="142.0"/><line x1="132.0" y1="155.4" x2="142.0" y2="172.7"/><line x1="100.0" y1="164.0" x2="100.0" y2="184.0"/><line x1="68.0" y1="155.4" x2="58.0" y2="172.7"/><line x1="44.6" y1="132.0" x2="27.3" y2="142.0"/><line x1="36.0" y1="100.0" x2="16.0" y2="100.0"/><line x1="44.6" y1="68.0" x2="27.3" y2="58.0"/><line x1="68.0" y1="44.6" x2="58.0" y2="27.3"/><line x1="100.0" y1="36.0" x2="100.0" y2="16.0"/><line x1="132.0" y1="44.6" x2="142.0" y2="27.3"/><line x1="155.4" y1="68.0" x2="172.7" y2="58.0"/></g>
+  <circle cx="100" cy="100" r="50" fill="url(#core)"/>
+</svg>

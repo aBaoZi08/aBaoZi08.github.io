@@ -1,0 +1,21 @@
+---
+// Your intro text. Each string below is one paragraph; edit the words inside the quotes.
+const paragraphs = [
+  "I’m from Fuzhou, China and Beckley, WV. At Yale, I’m planning on majoring in Computer Science and Mathematics with a certificate in Chinese. I’m most heavily involved in Yale’s Mathcounts Outreach, Yale Club Running, and y/cs.",
+  "I love being outdoors, especially to run and hike, and to capture cool scenery, but I also love staying indoors, baking and spending time with friends and family.",
+];
+---
+
+<!-- No heading here on purpose: the greeting above is the heading. The id keeps the "About" menu link working. -->
+<section id="about" aria-label="About me">
+  {paragraphs.map((text) => <p>{text}</p>)}
+</section>
+
+<style>
+  section {
+    padding-top: 0;
+  }
+  p + p {
+    margin-top: 1rem;
+  }
+</style>

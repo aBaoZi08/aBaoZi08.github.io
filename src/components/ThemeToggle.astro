@@ -1,0 +1,110 @@
+---
+// The sun in the sky IS the theme button. Click it: the sun sets, the moon rises
+// (and back). Pictures are set in src/config/theme.ts (sun, moon).
+import { theme } from "../config/theme";
+---
+
+<button id="theme-toggle" class="sky-toggle" type="button" aria-label="Switch to night mode">
+  <span class="orb orb-sun"><img class="sun-img" src={theme.sun} alt="" draggable="false" /></span>
+  <span class="orb orb-moon"><img src={theme.moon} alt="" draggable="false" /></span>
+</button>
+
+<style>
+  .sky-toggle {
+    position: absolute; /* phones: part of the sky at the top of the page */
+    top: 0.75rem;
+    right: 0.75rem;
+    z-index: 30;
+    width: clamp(64px, 18vw, 96px);
+    aspect-ratio: 1;
+    padding: 0;
+    border: 0;
+    background: none;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  @media (min-width: 900px) {
+    .sky-toggle {
+      top: 1.5rem;
+      right: 2rem;
+      width: 110px;
+    }
+  }
+  @media (min-width: 1200px) {
+    .sky-toggle {
+      position: fixed; /* big screens: stays in the sky corner while you scroll */
+    }
+  }
+  .sky-toggle:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 4px;
+  }
+
+  /* Sun and moon sit in the same spot; one sinks while the other rises. */
+  .orb {
+    position: absolute;
+    inset: 0;
+    transition:
+      transform 1s ease,
+      opacity 0.8s ease;
+  }
+  .orb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .orb-sun img {
+    animation: spin 90s linear infinite;
+    filter: drop-shadow(0 0 18px rgba(255, 214, 90, 0.8));
+  }
+  .orb-moon img {
+    filter: drop-shadow(0 0 16px rgba(220, 230, 255, 0.6));
+  }
+  .orb-moon {
+    opacity: 0;
+    transform: translateY(80%) scale(0.8);
+  }
+  :global(html[data-theme="dark"]) .orb-sun {
+    opacity: 0;
+    transform: translateY(80%) scale(0.8);
+  }
+  :global(html[data-theme="dark"]) .orb-moon {
+    opacity: 1;
+    transform: none;
+  }
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .orb-sun img {
+      animation: none;
+    }
+    .orb {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  // The saved theme is applied before the page paints (see BaseLayout.astro).
+  // This script only handles the click.
+  const button = document.getElementById("theme-toggle");
+
+  function updateLabel() {
+    const isDark = document.documentElement.dataset.theme === "dark";
+    button?.setAttribute("aria-label", isDark ? "Switch to day mode" : "Switch to night mode");
+  }
+
+  updateLabel();
+
+  button?.addEventListener("click", () => {
+    const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+    document.documentElement.dataset.theme = next;
+    try {
+      localStorage.setItem("theme", next); // remember the choice after refresh
+    } catch (e) {}
+    updateLabel();
+  });
+</script>

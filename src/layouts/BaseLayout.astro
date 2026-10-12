@@ -1,0 +1,41 @@
+---
+// The page shell: <head>, saved theme, then the scene (sky, menu, sun/moon, content, pond).
+import Scene from "../components/Scene.astro";
+import SideNav from "../components/SideNav.astro";
+import ThemeToggle from "../components/ThemeToggle.astro";
+import Pond from "../components/Pond.astro";
+import { theme } from "../config/theme";
+import "../styles/global.css";
+
+const { title } = Astro.props;
+
+// Hands the star picture path from src/config/theme.ts to the CSS.
+const starsVar = `--stars-image: url("${theme.stars}");`;
+---
+
+<html lang="en" data-theme="light" style={starsVar}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <!-- Applies the saved theme before the page shows, so there is no flash. -->
+    <script is:inline>
+      try {
+        document.documentElement.dataset.theme =
+          localStorage.getItem("theme") === "dark" ? "dark" : "light";
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#home">Skip to content</a>
+    <Scene />
+    <SideNav />
+    <ThemeToggle />
+    <main>
+      <!-- each page's content goes here -->
+      <slot />
+    </main>
+    <Pond />
+  </body>
+</html>

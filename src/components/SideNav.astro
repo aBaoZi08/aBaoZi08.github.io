@@ -1,0 +1,156 @@
+---
+// The left menu: one item per main section of the page. It floats on the scene
+// (no box). Clicking an item smoothly scrolls to that section.
+//
+// Each href matches an id on the page: #home and #projects-section are in
+// src/pages/index.astro; #about, #photography and #contact are in their own component files.
+//
+// ADDING A SECTION? Add one line to this list, and give the section
+// the matching id, e.g. <section id="skills">.
+const items = [
+  { label: "Home", href: "#home" },
+  { label: "About", href: "#about" },
+  { label: "Photography", href: "#photography" },
+  { label: "Projects", href: "#projects-section" },
+  { label: "Contact", href: "#contact" },
+];
+---
+
+<!-- Phones: this button opens and closes the menu. Hidden on wide screens. -->
+<button
+  id="menu-button"
+  class="menu-button"
+  type="button"
+  aria-expanded="false"
+  aria-controls="side-nav"
+>
+  Menu
+</button>
+
+<nav id="side-nav" class="side-nav" aria-label="Page sections">
+  <ul>
+    {
+      items.map((item) => (
+        <li>
+          <a href={item.href}>{item.label}</a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<div id="nav-backdrop" class="backdrop" hidden></div>
+
+<style>
+  /* ---------- phones (default): menu slides in from the left ---------- */
+  .menu-button {
+    position: fixed;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 30;
+    height: 2.75rem;
+    padding: 0 1rem;
+    font: inherit;
+    cursor: pointer;
+    color: var(--text);
+    background: var(--ui-bg);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    backdrop-filter: blur(6px);
+  }
+
+  .side-nav {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 25;
+    width: min(260px, 80vw);
+    padding-top: 4.5rem;
+    background: var(--drawer-bg);
+    border-right: 1px solid var(--line);
+    transform: translateX(-100%);
+    visibility: hidden; /* keeps hidden links out of keyboard focus */
+    transition:
+      transform 0.2s ease,
+      visibility 0s linear 0.2s;
+  }
+  .side-nav.open {
+    transform: none;
+    visibility: visible;
+    transition-delay: 0s;
+  }
+
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    background: rgba(0, 0, 0, 0.45);
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  a {
+    display: block;
+    padding: 0.75rem 1.5rem;
+    color: var(--text);
+    font-weight: 600;
+    text-decoration: none;
+    text-shadow: 0 0 10px var(--glow);
+  }
+  a:hover {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 6px;
+  }
+
+  /* ---------- wide screens: links float on the left of the scene ---------- */
+  @media (min-width: 900px) {
+    .menu-button,
+    .backdrop {
+      display: none;
+    }
+    .side-nav {
+      width: 200px;
+      padding-top: 2rem;
+      background: none; /* no panel: the links sit right on the sky */
+      border: 0;
+      transform: none;
+      visibility: visible;
+      transition: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .side-nav {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const menuButton = document.getElementById("menu-button");
+  const sideNav = document.getElementById("side-nav");
+  const backdrop = document.getElementById("nav-backdrop");
+
+  function setOpen(open: boolean) {
+    sideNav?.classList.toggle("open", open);
+    if (backdrop) backdrop.hidden = !open;
+    menuButton?.setAttribute("aria-expanded", String(open));
+  }
+
+  menuButton?.addEventListener("click", () => {
+    setOpen(!sideNav?.classList.contains("open"));
+  });
+  backdrop?.addEventListener("click", () => setOpen(false));
+  // close the menu after picking a section
+  sideNav?.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => setOpen(false));
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") setOpen(false);
+  });
+</script>

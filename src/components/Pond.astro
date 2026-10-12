@@ -1,0 +1,39 @@
+---
+// The pond along the bottom of the page. One picture for day, one for night;
+// switching theme cross-fades between them. Files are set in src/config/theme.ts.
+import { theme } from "../config/theme";
+---
+
+<div class="pond" aria-hidden="true">
+  <img class="pond-day" src={theme.pondDay} alt="" />
+  <img class="pond-night" src={theme.pondNight} alt="" />
+</div>
+
+<style>
+  .pond {
+    position: relative;
+    width: 100%;
+    margin-top: 3rem;
+    line-height: 0; /* removes the small gap under images */
+  }
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 55vh; /* keeps a very tall picture from filling the screen */
+    object-fit: cover;
+    object-position: center bottom;
+    transition: opacity 1s ease;
+  }
+  /* The night pond sits exactly on top of the day pond and fades in. */
+  .pond-night {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    max-height: none;
+    opacity: 0;
+  }
+  :global(html[data-theme="dark"]) .pond-night {
+    opacity: 1;
+  }
+</style>

@@ -1,0 +1,147 @@
+/* Global styles. Imported once in src/layouts/BaseLayout.astro.
+   Change the colors here and they update everywhere. */
+
+:root {
+  /* ---------- DAY (default) ---------- */
+  color-scheme: light;
+  --text: #123047;
+  --muted: #2e5370;
+  --accent: #0b5cad;
+  --line: rgba(18, 48, 71, 0.3);
+  --bg: #bfe3ff; /* shows only for a moment before the sky loads */
+  --ui-bg: rgba(255, 255, 255, 0.6); /* the phone "Menu" button */
+  --drawer-bg: rgba(206, 232, 255, 0.97); /* the phone menu panel */
+  --glow: rgba(255, 255, 255, 0.7); /* soft halo that keeps text readable over clouds */
+
+  /* Sky colors, top to bottom. Change these to repaint the sky. */
+  --sky-day-top: #6cbdf0;
+  --sky-day-bottom: #dff3ff;
+  --sky-night-top: #040a22;
+  --sky-night-bottom: #1a2c66;
+
+  --cloud-scale: 1; /* 1 = full size; clouds shrink on phones below */
+
+  --font-body: ui-rounded, "SF Pro Rounded", "Nunito", "Avenir Next", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-display: ui-rounded, "SF Pro Rounded", "Nunito", "Avenir Next", "Trebuchet MS", system-ui, sans-serif;
+}
+
+@media (max-width: 600px) {
+  :root {
+    --cloud-scale: 0.6;
+  }
+}
+
+/* ---------- NIGHT: the sun/moon button sets data-theme="dark" on <html> ---------- */
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --text: #eef3ff;
+  --muted: #b8c6e6;
+  --accent: #f4aa84;
+  --line: rgba(238, 243, 255, 0.3);
+  --bg: #0a1740;
+  --ui-bg: rgba(10, 22, 60, 0.6);
+  --drawer-bg: rgba(8, 18, 52, 0.97);
+  --glow: rgba(5, 10, 35, 0.7);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* smooth scrolling when you click a left-menu item */
+html {
+  scroll-behavior: smooth;
+  background-color: var(--bg);
+}
+
+body {
+  position: relative; /* the phone sun/moon is placed relative to the page */
+  min-height: 100vh;
+  display: flex; /* lets the pond sit at the very bottom, even on short pages */
+  flex-direction: column;
+  margin: 0;
+  overflow-x: hidden;
+  color: var(--text);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  transition: color 0.8s ease;
+}
+
+/* No header, no cards: text sits directly on the sky. */
+main {
+  flex: 1;
+  width: 100%;
+  padding: 3.5rem 0 2rem;
+  text-shadow: 0 0 12px var(--glow);
+}
+
+/* wide screens: leave room for the floating menu on the left */
+@media (min-width: 900px) {
+  main {
+    padding-left: 200px;
+  }
+}
+
+/* Text sections are kept to a readable width. Add class="full-bleed" to let one run edge to edge. */
+main > section:not(.full-bleed),
+main > div {
+  max-width: 800px;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+
+section {
+  padding-top: 3rem;
+}
+#home {
+  padding-top: 4rem;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  line-height: 1.2;
+}
+h1 {
+  margin: 0 0 0.5rem;
+  font-size: clamp(2.4rem, 7vw, 4.25rem);
+  letter-spacing: -0.02em;
+}
+h2 {
+  margin: 0 0 0.75rem;
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+}
+
+a {
+  color: var(--accent);
+}
+
+/* keeps anchor links (#projects) from landing flush against the top edge */
+[id] {
+  scroll-margin-top: 4rem;
+}
+
+/* Lets keyboard users jump past the menu. Invisible until focused. */
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: 0.5rem;
+  z-index: 50;
+  padding: 0.5rem 0.9rem;
+  color: var(--bg);
+  background: var(--accent);
+  border-radius: 6px;
+}
+.skip-link:focus {
+  left: 0.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  body {
+    transition: none;
+  }
+}

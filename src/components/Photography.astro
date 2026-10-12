@@ -1,0 +1,200 @@
+---
+// The clothesline. Which photos hang here, and in what order, is set in
+// src/config/photos.ts. Photo files live in public/photos/.
+import { photos } from "../config/photos";
+
+// Gentle, repeating tilts so the photos look hand-hung.
+const tilts = [-2.2, 1.6, -1.1, 2.4, -1.8, 1.2];
+---
+
+<section id="photography" class="full-bleed">
+  <div class="head">
+    <h2>Photography</h2>
+    <p class="hint">Swipe or drag sideways to see more.</p>
+  </div>
+
+  <div
+    class="scroller"
+    tabindex="0"
+    role="region"
+    aria-label="Photography. Scroll sideways to see more photos."
+  >
+    <ul class="line">
+      {
+        photos.map((photo, i) => (
+          <li class="hang" style={`--tilt: ${tilts[i % tilts.length]}deg;`}>
+            <span class="pin" aria-hidden="true" />
+            <img
+              src={photo.src}
+              alt={photo.alt}
+              loading={i < 3 ? "eager" : "lazy"}
+              draggable="false"
+            />
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .head {
+    max-width: 800px;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+  .hint {
+    margin: 0.25rem 0 0.5rem;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  /* The scrolling strip. Touch: swipe. Desktop: trackpad, scrollbar, or drag. */
+  .scroller {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 1rem 0 2rem;
+    cursor: grab;
+    scroll-behavior: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent) transparent;
+    text-shadow: none;
+  }
+  .scroller.dragging {
+    cursor: grabbing;
+    user-select: none;
+  }
+
+  /* The string. It stretches the full width of all the photos. */
+  .line {
+    --photo-h: clamp(150px, 26vw, 280px); /* photo height; width follows each photo's shape */
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: clamp(1.25rem, 4vw, 3rem);
+    width: max-content;
+    min-width: 100%;
+    margin: 0;
+    padding: 0 clamp(1.25rem, 6vw, 4rem);
+    list-style: none;
+  }
+  .line::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 12px;
+    height: 3px;
+    background: linear-gradient(#e0c28a, #a9824a);
+    border-radius: 2px;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.25);
+  }
+
+  .hang {
+    position: relative;
+    flex: none;
+    transform: rotate(var(--tilt));
+    transform-origin: 50% 0;
+  }
+  .hang:hover,
+  .hang:focus-within {
+    animation: sway 2.4s ease-in-out infinite alternate;
+  }
+  @keyframes sway {
+    from {
+      transform: rotate(calc(var(--tilt) - 1.2deg));
+    }
+    to {
+      transform: rotate(calc(var(--tilt) + 1.2deg));
+    }
+  }
+
+  /* Photos keep their own proportions: only the height is set. */
+  .hang img {
+    display: block;
+    box-sizing: content-box;
+    height: var(--photo-h);
+    width: auto;
+    max-width: none;
+    margin-top: 18px;
+    border: 6px solid #ffffff;
+    border-radius: 3px;
+    background: #ffffff;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
+  }
+
+  /* The clothespin, drawn with CSS. */
+  .pin {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    z-index: 2;
+    width: 14px;
+    height: 42px;
+    transform: translateX(-50%);
+    border-radius: 3px 3px 5px 5px;
+    background: linear-gradient(90deg, #d6a869, #b98543 55%, #cfa05e);
+    box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.35);
+  }
+  .pin::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 6px;
+    width: 2px;
+    height: 26px;
+    transform: translateX(-50%);
+    background: rgba(60, 35, 10, 0.55);
+  }
+  .pin::after {
+    content: "";
+    position: absolute;
+    left: -1px;
+    right: -1px;
+    top: 14px;
+    height: 4px;
+    border-radius: 2px;
+    background: #8c8c8c;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hang:hover,
+    .hang:focus-within {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  // Desktop: click and drag the strip sideways. (Touch screens just swipe.)
+  const scroller = document.querySelector<HTMLElement>(".scroller");
+
+  if (scroller) {
+    let dragging = false;
+    let startX = 0;
+    let startLeft = 0;
+
+    scroller.addEventListener("pointerdown", (event) => {
+      if (event.pointerType !== "mouse" || event.button !== 0) return;
+      dragging = true;
+      startX = event.clientX;
+      startLeft = scroller.scrollLeft;
+      scroller.classList.add("dragging");
+      scroller.setPointerCapture(event.pointerId);
+    });
+
+    scroller.addEventListener("pointermove", (event) => {
+      if (!dragging) return;
+      scroller.scrollLeft = startLeft - (event.clientX - startX);
+    });
+
+    function stopDragging() {
+      dragging = false;
+      scroller?.classList.remove("dragging");
+    }
+    scroller.addEventListener("pointerup", stopDragging);
+    scroller.addEventListener("pointercancel", stopDragging);
+    scroller.addEventListener("lostpointercapture", stopDragging);
+  }
+</script>

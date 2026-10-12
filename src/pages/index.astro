@@ -1,0 +1,28 @@
+---
+// Your home page. Each file in src/pages/ becomes a URL; index.astro is "/".
+// BaseLayout adds the sky, left menu, sun/moon button and pond around everything here.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import About from "../components/About.astro";
+import Photography from "../components/Photography.astro";
+import Projects from "../components/Projects.astro";
+import Contact from "../components/Contact.astro";
+
+const name = "Zimeng Ren";
+---
+
+<BaseLayout title={name}>
+  <!-- Each id below is a scroll target for an item in src/components/SideNav.astro -->
+  <section id="home">
+    <h1>hi, i’m zimeng ren :D</h1>
+  </section>
+
+  <About />
+
+  <Photography />
+
+  <div id="projects-section">
+    <Projects />
+  </div>
+
+  <Contact />
+</BaseLayout>
